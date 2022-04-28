@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/aviationexam/docker_service_exporter/collector"
 	"net/http"
 	"os"
 	"os/signal"
@@ -51,6 +52,8 @@ func main() {
 
 	// version metric
 	prometheus.MustRegister(version.NewCollector(name))
+
+	prometheus.MustRegister(collector.NewServices(logger))
 
 	// create a http server
 	server := &http.Server{}
