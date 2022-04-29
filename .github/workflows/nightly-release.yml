@@ -32,6 +32,7 @@ jobs:
           GOPROXY: "https://proxy.golang.org"
           GOOS: linux
           GOARCH: amd64
+        working-directory: src
         run: |
           go build -v -ldflags="
           -w
@@ -41,12 +42,12 @@ jobs:
           -X 'github.com/prometheus/common/version.Version=${{ steps.gitversion.outputs.SemVer }}'
           -X 'github.com/prometheus/common/version.Revision=${{ steps.gitversion.outputs.VersionSourceSha }}'
           -X 'github.com/prometheus/common/version.Branch=${{ steps.gitversion.outputs.BranchName }}'
-          -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'" src
+          -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'"
 
       - uses: actions/upload-artifact@v3
         with:
           name: docker_service_exporter.${{ steps.gitversion.outputs.SemVer }}
-          path: docker_service_exporter
+          path: src/docker_service_exporter
 
       - name: Docker Build and push
         uses: VaultVulp/gp-docker-action@1.2.0

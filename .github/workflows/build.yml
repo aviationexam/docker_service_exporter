@@ -23,9 +23,11 @@ jobs:
       - name: Build
         env:
           GOPROXY: "https://proxy.golang.org"
-        run: go build src
+        working-directory: src
+        run: go build
 
       - name: Test
         env:
           GOPROXY: "https://proxy.golang.org"
-        run: go test -v src
+        working-directory: src
+        run: go test -v
