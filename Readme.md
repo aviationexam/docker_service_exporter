@@ -1,7 +1,5 @@
 # Docker Service Exporter
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/aviationexam/docker_service_exporter)](https://goreportcard.com/report/github.com/aviationexam/docker_service_exporter)
-
 Docker Service exporter for various metrics about Docker Services, written in Go.
 
 ### Installation
