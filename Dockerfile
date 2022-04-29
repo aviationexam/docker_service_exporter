@@ -25,5 +25,5 @@ FROM alpine:3.15
 COPY --from=builder /src/docker_service_exporter /bin/docker_service_exporter
 
 EXPOSE      9115
-USER        nobody
+USER        root # required to access the /var/run/docker.sock
 ENTRYPOINT  [ "/bin/docker_service_exporter" ]
