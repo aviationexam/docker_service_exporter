@@ -13,11 +13,11 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="\
     -w\
     -s\
     -X 'main.Version=${APP_VERSION}'\
-    -X 'app/build.Time=${APP_BUILD_DATE}'\
+    -X 'app/build.Time=$( date '+%F %H-%M-%S' )'\
     -X 'github.com/prometheus/common/version.Version=${APP_VERSION}'\
     -X 'github.com/prometheus/common/version.Revision=${APP_REVISION}'\
     -X 'github.com/prometheus/common/version.Branch=${APP_BRANCH}'\
-    -X 'github.com/prometheus/common/version.BuildDate=${APP_BUILD_DATE}'\
+    -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'\
     " .
 
 FROM alpine:3.15
