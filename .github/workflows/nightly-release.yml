@@ -55,3 +55,8 @@ jobs:
           dockerfile: Dockerfile
           image-name: server
           image-tag: ${{ steps.gitversion.outputs.SemVer }}
+          custom-args: |
+            --build-arg APP_VERSION=${{ steps.gitversion.outputs.SemVer }}
+            --build-arg APP_BUILD_DATE=$( date '+%F %H-%M-%S' )
+            --build-arg APP_REVISION=${{ steps.gitversion.outputs.VersionSourceSha }}
+            --build-arg APP_BRANCH=${{ steps.gitversion.outputs.BranchName }}
