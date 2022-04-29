@@ -14,6 +14,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"gopkg.in/alecthomas/kingpin.v2"
+
+	dockerClient "github.com/docker/docker/client"
 )
 
 const name = "docker_service_exporter"
@@ -50,17 +52,26 @@ func main() {
 
 	logger := getLogger(*logLevel, *logOutput, *logFormat)
 
-	// version metric
-	prometheus.MustRegister(version.NewCollector(name))
-
-	prometheus.MustRegister(collector.NewServices(logger))
-
-	// create a http server
-	server := &http.Server{}
-
 	// Create a context that is cancelled on SIGKILL or SIGINT.
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer cancel()
+
+	dockerCli, err := dockerClient.NewClientWithOpts(dockerClient.FromEnv)
+	if err != nil {
+		_ = level.Error(logger).Log(
+			"msg", "failed create docker client",
+			"err", err,
+		)
+		os.Exit(1)
+	}
+
+	// version metric
+	prometheus.MustRegister(version.NewCollector(name))
+
+	prometheus.MustRegister(collector.NewServices(logger, dockerCli, ctx))
+
+	// create a http server
+	server := &http.Server{}
 
 	mux := http.DefaultServeMux
 	mux.Handle(*metricsPath, promhttp.Handler())
@@ -72,7 +83,8 @@ func main() {
 			<p><a href="` + *metricsPath + `">Metrics</a></p>
 			<p><a href="/healthz">Health check</a></p>
 			</body>
-			</html>`))
+			</html>`,
+		))
 		if err != nil {
 			_ = level.Error(logger).Log(
 				"msg", "failed handling writer",
