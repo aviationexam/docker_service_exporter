@@ -20,7 +20,7 @@ elasticsearch_exporter:
   image: aviationexam/docker_service_exporter:latest
   restart: always
   ports:
-    - "127.0.0.1:9114:9115"
+    - "127.0.0.1:9115:9115"
 ```
 
 ### Configuration
