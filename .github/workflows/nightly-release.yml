@@ -30,8 +30,14 @@ jobs:
       - name: Build
         env:
           GOPROXY: "https://proxy.golang.org"
+          GOOS: linux
+          GOARCH: amd64
         run: |
-          go build -v -ldflags="-X 'main.Version=v${{ steps.gitversion.outputs.SemVer }}' -X 'app/build.Time=$( date '+%F %H-%M-%S' )'
+          go build -v -ldflags="
+          -w
+          -s  
+          -X 'main.Version=v${{ steps.gitversion.outputs.SemVer }}'
+          -X 'app/build.Time=$( date '+%F %H-%M-%S' )'
           -X 'github.com/prometheus/common/version.Version=${{ steps.gitversion.outputs.SemVer }}'
           -X 'github.com/prometheus/common/version.Revision=${{ steps.gitversion.outputs.VersionSourceSha }}'
           -X 'github.com/prometheus/common/version.Branch=${{ steps.gitversion.outputs.BranchName }}'

@@ -1,2 +1,5 @@
+*.go text=auto eol=lf
+go.mod text=auto eol=lf
+go.sum text=auto eol=lf
 *.yml text=auto eol=lf
 Dockerfile text=auto eol=lf
