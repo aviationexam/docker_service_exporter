@@ -41,7 +41,7 @@ jobs:
           -X 'github.com/prometheus/common/version.Version=${{ steps.gitversion.outputs.SemVer }}'
           -X 'github.com/prometheus/common/version.Revision=${{ steps.gitversion.outputs.VersionSourceSha }}'
           -X 'github.com/prometheus/common/version.Branch=${{ steps.gitversion.outputs.BranchName }}'
-          -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'" .
+          -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'" src
 
       - uses: actions/upload-artifact@v3
         with:
