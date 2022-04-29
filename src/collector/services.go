@@ -30,20 +30,22 @@ type serviceMetric struct {
 
 // Services information struct
 type Services struct {
-	logger    log.Logger
-	dockerCli *dockerClient.Client
-	ctx       context.Context
+	logger          log.Logger
+	dockerCli       *dockerClient.Client
+	inspectServices *bool
+	ctx             context.Context
 
 	up             prometheus.Gauge
 	totalScrapes   prometheus.Counter
 	serviceMetrics []*serviceMetric
 }
 
-func NewServices(logger log.Logger, dockerCli *dockerClient.Client, ctx context.Context) *Services {
+func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServices *bool, ctx context.Context) *Services {
 	return &Services{
-		logger:    logger,
-		dockerCli: dockerCli,
-		ctx:       ctx,
+		logger:          logger,
+		dockerCli:       dockerCli,
+		inspectServices: inspectServices,
+		ctx:             ctx,
 		up: prometheus.NewGauge(prometheus.GaugeOpts{
 			Name: prometheus.BuildFQName(namespace, "node_stats", "up"),
 			Help: "Was the last scrape of the Docker services successful.",
@@ -173,6 +175,26 @@ func (s Services) Collect(ch chan<- prometheus.Metric) {
 				serviceMetric.Value(service),
 				serviceMetric.Labels(service)...,
 			)
+		}
+
+		if s.inspectServices != nil && *s.inspectServices {
+			_, rawData, err := s.dockerCli.ServiceInspectWithRaw(
+				s.ctx,
+				service.ID,
+				types.ServiceInspectOptions{
+					InsertDefaults: true,
+				},
+			)
+			if err != nil {
+				_ = level.Warn(s.logger).Log(
+					"msg", "failed to fetch docker service raw inspection: "+service.ID,
+					"err", err,
+				)
+				continue
+			}
+
+			// TODO parse & populate data
+			_ = rawData
 		}
 	}
 }

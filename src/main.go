@@ -30,6 +30,10 @@ func main() {
 			"web.telemetry-path",
 			"Path under which to expose metrics.",
 		).Default("/metrics").String()
+		inspectServices = kingpin.Flag(
+			"docker.inspect-services",
+			"Export detailed stats for service.",
+		).Default("false").Bool()
 		logLevel = kingpin.Flag(
 			"log.level",
 			"Sets the loglevel. Valid levels are '"+logLevelDebug+"', '"+logLevelInfo+"', '"+logLevelWarn+"', '"+loglevelError+"'",
@@ -68,7 +72,7 @@ func main() {
 	// version metric
 	prometheus.MustRegister(version.NewCollector(name))
 
-	prometheus.MustRegister(collector.NewServices(logger, dockerCli, ctx))
+	prometheus.MustRegister(collector.NewServices(logger, dockerCli, inspectServices, ctx))
 
 	// create a http server
 	server := &http.Server{}
