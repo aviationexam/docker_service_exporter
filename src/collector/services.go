@@ -120,11 +120,11 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
-					if service.Spec.Mode.Replicated != nil {
-						return float64(*service.Spec.Mode.Replicated.Replicas)
+					if service.Spec.Mode.Replicated == nil {
+						return -1
 					}
 
-					return -1
+					return float64(*service.Spec.Mode.Replicated.Replicas)
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -136,6 +136,10 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
+					if service.ServiceStatus == nil {
+						return -1
+					}
+
 					return float64(service.ServiceStatus.RunningTasks)
 				},
 				Labels: defaultServiceLabelValues,
@@ -148,6 +152,10 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
+					if service.ServiceStatus == nil {
+						return -1
+					}
+
 					return float64(service.ServiceStatus.DesiredTasks)
 				},
 				Labels: defaultServiceLabelValues,
@@ -160,6 +168,10 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
+					if service.ServiceStatus == nil {
+						return -1
+					}
+
 					return float64(service.ServiceStatus.CompletedTasks)
 				},
 				Labels: defaultServiceLabelValues,
