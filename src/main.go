@@ -68,6 +68,7 @@ func main() {
 		)
 		os.Exit(1)
 	}
+	dockerCli.NegotiateAPIVersion(ctx)
 
 	// version metric
 	prometheus.MustRegister(version.NewCollector(name))
