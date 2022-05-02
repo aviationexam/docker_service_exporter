@@ -56,7 +56,7 @@ func unifyServiceLabels(labels []string) []string {
 type serviceMetric struct {
 	Type   prometheus.ValueType
 	Desc   *prometheus.Desc
-	Value  func(node swarm.Service) float64
+	Value  func(node swarm.Service) (float64, bool)
 	Labels func(s Services, service swarm.Service) []string
 }
 
@@ -95,8 +95,8 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Service created at",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
-					return float64(service.Meta.CreatedAt.UnixMilli()) / 1000
+				Value: func(service swarm.Service) (float64, bool) {
+					return float64(service.Meta.CreatedAt.UnixMilli()) / 1000, true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -107,8 +107,8 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Service updated at",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
-					return float64(service.Meta.UpdatedAt.UnixMilli()) / 1000
+				Value: func(service swarm.Service) (float64, bool) {
+					return float64(service.Meta.UpdatedAt.UnixMilli()) / 1000, true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -119,12 +119,12 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Service replicas",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
+				Value: func(service swarm.Service) (float64, bool) {
 					if service.Spec.Mode.Replicated == nil {
-						return -1
+						return 0, false
 					}
 
-					return float64(*service.Spec.Mode.Replicated.Replicas)
+					return float64(*service.Spec.Mode.Replicated.Replicas), true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -135,12 +135,12 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Actually running services",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
+				Value: func(service swarm.Service) (float64, bool) {
 					if service.ServiceStatus == nil {
-						return -1
+						return 0, false
 					}
 
-					return float64(service.ServiceStatus.RunningTasks)
+					return float64(service.ServiceStatus.RunningTasks), true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -151,12 +151,12 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Desired number of tasks",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
+				Value: func(service swarm.Service) (float64, bool) {
 					if service.ServiceStatus == nil {
-						return -1
+						return 0, false
 					}
 
-					return float64(service.ServiceStatus.DesiredTasks)
+					return float64(service.ServiceStatus.DesiredTasks), true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -167,12 +167,12 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 					"Completed number of tasks",
 					serviceLabels, nil,
 				),
-				Value: func(service swarm.Service) float64 {
+				Value: func(service swarm.Service) (float64, bool) {
 					if service.ServiceStatus == nil {
-						return -1
+						return 0, false
 					}
 
-					return float64(service.ServiceStatus.CompletedTasks)
+					return float64(service.ServiceStatus.CompletedTasks), true
 				},
 				Labels: defaultServiceLabelValues,
 			},
@@ -214,12 +214,14 @@ func (s Services) Collect(ch chan<- prometheus.Metric) {
 		service := services[serviceId]
 
 		for _, serviceMetric := range s.serviceMetrics {
-			ch <- prometheus.MustNewConstMetric(
-				serviceMetric.Desc,
-				serviceMetric.Type,
-				serviceMetric.Value(service),
-				serviceMetric.Labels(s, service)...,
-			)
+			if val, ok := serviceMetric.Value(service); ok {
+				ch <- prometheus.MustNewConstMetric(
+					serviceMetric.Desc,
+					serviceMetric.Type,
+					val,
+					serviceMetric.Labels(s, service)...,
+				)
+			}
 		}
 	}
 }

@@ -49,9 +49,9 @@ Commandline parameters are specified with `--`.
 | dockerservices_meta_created             | counter | 1           | Unix time with milliseconds precision |
 | dockerservices_meta_updated             | counter | 1           | Unix time with milliseconds precision |
 | dockerservices_spec_replicas            | gauge   | 1           | Required number of service replicas   |
-| dockerservices_service_status_running   | gauge   | 1           | Actually running services             |
-| dockerservices_service_status_desired   | gauge   | 1           | Desired number of tasks               |
-| dockerservices_service_status_completed | gauge   | 1           | Completed number of tasks             |
+| dockerservices_service_status_running   | gauge   | 0,1         | Actually running services             |
+| dockerservices_service_status_desired   | gauge   | 0,1         | Desired number of tasks               |
+| dockerservices_service_status_completed | gauge   | 0,1         | Completed number of tasks             |
 
 ## Contributing
 
