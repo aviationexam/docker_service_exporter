@@ -89,7 +89,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 		}),
 		serviceMetrics: []*serviceMetric{
 			{
-				Type: prometheus.GaugeValue,
+				Type: prometheus.CounterValue,
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "meta", "created"),
 					"Service created at",
@@ -101,7 +101,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 				Labels: defaultServiceLabelValues,
 			},
 			{
-				Type: prometheus.GaugeValue,
+				Type: prometheus.CounterValue,
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "meta", "updated"),
 					"Service updated at",
@@ -132,7 +132,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 				Type: prometheus.GaugeValue,
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "running"),
-					"Service replicas",
+					"Actually running services",
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
@@ -148,7 +148,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 				Type: prometheus.GaugeValue,
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "desired"),
-					"Service replicas",
+					"Desired number of tasks",
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
@@ -164,7 +164,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels 
 				Type: prometheus.GaugeValue,
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "completed"),
-					"Service replicas",
+					"Completed number of tasks",
 					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {

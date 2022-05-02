@@ -33,19 +33,25 @@ Below is the command line options summary:
 docker_service_exporter --help
 ```
 
-| Argument           | Introduced in Version | Description                                           | Default  |
-|--------------------|-----------------------|-------------------------------------------------------|----------|
-| web.listen-address | 0.1.0                 | Address to listen on for web interface and telemetry. | :9115    |
-| web.telemetry-path | 0.1.0                 | Path under which to expose metrics.                   | /metrics |
-| version            | 0.1.0                 | Show version info on stdout and exit.                 |          |
+| Argument                    | Introduced in Version | Description                                           | Default    |
+|-----------------------------|-----------------------|-------------------------------------------------------|------------|
+| web.listen-address          | 0.1.0                 | Address to listen on for web interface and telemetry. | :9115      |
+| web.telemetry-path          | 0.1.0                 | Path under which to expose metrics.                   | /metrics   |
+| docker.service-extra-labels | 0.1.0                 | Additional labels which will be exported.             | []string{} |
+| version                     | 0.1.0                 | Show version info on stdout and exit.                 |            |
 
 Commandline parameters are specified with `--`.
 
 ### Metrics
 
-| Name                                   | Type  | Cardinality | Help                                                  |
-|----------------------------------------|-------|-------------|-------------------------------------------------------|
-| elasticsearch_clusterinfo_version_info | gauge | 6           | Constant metric with ES version information as labels |
+| Name                                    | Type    | Cardinality | Help                                  |
+|-----------------------------------------|---------|-------------|---------------------------------------|
+| dockerservices_meta_created             | counter | 1           | Unix time with milliseconds precision |
+| dockerservices_meta_updated             | counter | 1           | Unix time with milliseconds precision |
+| dockerservices_spec_replicas            | gauge   | 1           | Required number of service replicas   |
+| dockerservices_service_status_running   | gauge   | 1           | Actually running services             |
+| dockerservices_service_status_desired   | gauge   | 1           | Desired number of tasks               |
+| dockerservices_service_status_completed | gauge   | 1           | Completed number of tasks             |
 
 ## Contributing
 
