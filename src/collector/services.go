@@ -8,44 +8,77 @@ import (
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
+	"strings"
 )
 
 var (
-	defaultServiceLabels      = []string{"id", "name", "task_runtime"}
-	defaultServiceLabelValues = func(service swarm.Service) []string {
-		return []string{
+	defaultExportedServiceLabels = []string{
+		"com.docker.stack.image",
+		"com.docker.stack.namespace",
+	}
+	defaultServiceLabels      = append([]string{"id", "name", "task_runtime"}, unifyServiceLabels(defaultExportedServiceLabels)...)
+	defaultServiceLabelValues = func(s Services, service swarm.Service) []string {
+		labels := []string{
 			service.ID,
 			service.Spec.Annotations.Name,
 			string(service.Spec.TaskTemplate.Runtime),
 		}
+
+		for _, labelKey := range defaultExportedServiceLabels {
+			if labelValue, ok := service.Spec.Annotations.Labels[labelKey]; ok {
+				labels = append(labels, labelValue)
+			} else {
+				labels = append(labels, "")
+			}
+		}
+
+		for _, labelKey := range s.extraLabels {
+			if labelValue, ok := service.Spec.Annotations.Labels[labelKey]; ok {
+				labels = append(labels, labelValue)
+			} else {
+				labels = append(labels, "")
+			}
+		}
+
+		return labels
 	}
 )
+
+func unifyServiceLabels(labels []string) []string {
+	returnLabels := make([]string, len(labels))
+
+	for labelKey, returnValue := range labels {
+		returnLabels[labelKey] = "docker_label_" + strings.Replace(returnValue, ".", "_", -1)
+	}
+	return returnLabels
+}
 
 type serviceMetric struct {
 	Type   prometheus.ValueType
 	Desc   *prometheus.Desc
 	Value  func(node swarm.Service) float64
-	Labels func(node swarm.Service) []string
+	Labels func(s Services, service swarm.Service) []string
 }
 
 // Services information struct
 type Services struct {
-	logger          log.Logger
-	dockerCli       *dockerClient.Client
-	inspectServices *bool
-	ctx             context.Context
-
+	logger         log.Logger
+	dockerCli      *dockerClient.Client
+	ctx            context.Context
+	extraLabels    []string
 	up             prometheus.Gauge
 	totalScrapes   prometheus.Counter
 	serviceMetrics []*serviceMetric
 }
 
-func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServices *bool, ctx context.Context) *Services {
+func NewServices(logger log.Logger, dockerCli *dockerClient.Client, extraLabels []string, ctx context.Context) *Services {
+	serviceLabels := append(defaultServiceLabels, unifyServiceLabels(extraLabels)...)
+
 	return &Services{
-		logger:          logger,
-		dockerCli:       dockerCli,
-		inspectServices: inspectServices,
-		ctx:             ctx,
+		logger:      logger,
+		dockerCli:   dockerCli,
+		extraLabels: extraLabels,
+		ctx:         ctx,
 		up: prometheus.NewGauge(prometheus.GaugeOpts{
 			Name: prometheus.BuildFQName(namespace, "node_stats", "up"),
 			Help: "Was the last scrape of the Docker services successful.",
@@ -60,7 +93,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "meta", "created"),
 					"Service created at",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					return float64(service.Meta.CreatedAt.UnixMilli()) / 1000
@@ -72,7 +105,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "meta", "updated"),
 					"Service updated at",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					return float64(service.Meta.UpdatedAt.UnixMilli()) / 1000
@@ -84,7 +117,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "spec", "replicas"),
 					"Service replicas",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					if service.Spec.Mode.Replicated != nil {
@@ -100,7 +133,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "running"),
 					"Service replicas",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					return float64(service.ServiceStatus.RunningTasks)
@@ -112,7 +145,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "desired"),
 					"Service replicas",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					return float64(service.ServiceStatus.DesiredTasks)
@@ -124,7 +157,7 @@ func NewServices(logger log.Logger, dockerCli *dockerClient.Client, inspectServi
 				Desc: prometheus.NewDesc(
 					prometheus.BuildFQName(namespace, "service_status", "completed"),
 					"Service replicas",
-					defaultServiceLabels, nil,
+					serviceLabels, nil,
 				),
 				Value: func(service swarm.Service) float64 {
 					return float64(service.ServiceStatus.CompletedTasks)
@@ -173,28 +206,8 @@ func (s Services) Collect(ch chan<- prometheus.Metric) {
 				serviceMetric.Desc,
 				serviceMetric.Type,
 				serviceMetric.Value(service),
-				serviceMetric.Labels(service)...,
+				serviceMetric.Labels(s, service)...,
 			)
-		}
-
-		if s.inspectServices != nil && *s.inspectServices {
-			_, rawData, err := s.dockerCli.ServiceInspectWithRaw(
-				s.ctx,
-				service.ID,
-				types.ServiceInspectOptions{
-					InsertDefaults: true,
-				},
-			)
-			if err != nil {
-				_ = level.Warn(s.logger).Log(
-					"msg", "failed to fetch docker service raw inspection: "+service.ID,
-					"err", err,
-				)
-				continue
-			}
-
-			// TODO parse & populate data
-			_ = rawData
 		}
 	}
 }
