@@ -4,13 +4,12 @@ go 1.18
 
 require (
 	github.com/go-kit/log v0.2.1
-	github.com/prometheus/client_golang v1.12.2
+	github.com/prometheus/client_golang v1.13.0
 	github.com/prometheus/common v0.37.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
 
 require (
-	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
@@ -36,10 +35,10 @@ require (
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 	gotest.tools/v3 v3.2.0 // indirect
 )
