@@ -5,11 +5,14 @@ go 1.18
 require (
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.17.0
-	github.com/prometheus/common v0.44.0
+	github.com/prometheus/common v0.45.0
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 )
 
-require golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+require (
+	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
+	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+)
 
 require (
 	github.com/Microsoft/go-winio v0.5.1 // indirect
@@ -23,8 +26,6 @@ require (
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
