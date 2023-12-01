@@ -14,7 +14,7 @@ docker run --rm -p 9115:9115 aviationexam/docker_service_exporter:latest
 Example `docker-compose.yml`:
 
 ```yaml
-elasticsearch_exporter:
+docker_service_exporter:
   image: aviationexam/docker_service_exporter:latest
   restart: always
   ports:
