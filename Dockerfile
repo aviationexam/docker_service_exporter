@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="\
     -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'\
     " .
 
-FROM alpine:3.18.5
+FROM alpine:3.19.0
 
 COPY --from=builder /src/docker_service_exporter /bin/docker_service_exporter
 
