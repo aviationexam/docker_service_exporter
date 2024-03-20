@@ -12,10 +12,11 @@ import (
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/go-kit/log/level"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors/version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/common/version"
 
 	dockerClient "github.com/docker/docker/client"
+	prometheusVersion "github.com/prometheus/common/version"
 )
 
 const name = "docker_service_exporter"
@@ -50,7 +51,7 @@ func main() {
 		).Default(logOutputStderr).String()
 	)
 
-	kingpin.Version(version.Print(name))
+	kingpin.Version(prometheusVersion.Print(name))
 	kingpin.CommandLine.HelpFlag.Short('h')
 	kingpin.Parse()
 
