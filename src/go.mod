@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/docker/docker v27.1.2+incompatible
+	github.com/docker/docker v27.2.0+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.20.2
 	github.com/prometheus/common v0.57.0
