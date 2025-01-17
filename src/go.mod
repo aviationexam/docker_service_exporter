@@ -7,7 +7,7 @@ require (
 	github.com/docker/docker v27.5.0+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.20.5
-	github.com/prometheus/common v0.61.0
+	github.com/prometheus/common v0.62.0
 )
 
 require (
@@ -45,6 +45,6 @@ require (
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect
-	google.golang.org/protobuf v1.35.2 // indirect
+	google.golang.org/protobuf v1.36.1 // indirect
 	gotest.tools/v3 v3.5.1 // indirect
 )
