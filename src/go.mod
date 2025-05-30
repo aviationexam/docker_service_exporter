@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/docker/docker v28.1.1+incompatible
+	github.com/docker/docker v28.2.1+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.64.0
@@ -15,6 +15,8 @@ require (
 	github.com/alecthomas/units v0.0.0-20231202071711-9a357b53e9c9 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/containerd/errdefs v1.0.0 // indirect
+	github.com/containerd/errdefs/pkg v0.3.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
