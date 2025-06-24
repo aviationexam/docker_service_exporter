@@ -7,7 +7,7 @@ require (
 	github.com/docker/docker v28.2.2+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.22.0
-	github.com/prometheus/common v0.64.0
+	github.com/prometheus/common v0.65.0
 )
 
 require (
