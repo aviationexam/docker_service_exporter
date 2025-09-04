@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/docker/docker v28.3.3+incompatible
+	github.com/docker/docker v28.4.0+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.23.0
 	github.com/prometheus/common v0.66.0
@@ -25,7 +25,6 @@ require (
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/sys/atomicwriter v0.1.0 // indirect
