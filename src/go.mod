@@ -7,7 +7,7 @@ require (
 	github.com/docker/docker v28.4.0+incompatible
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/client_golang v1.23.1
-	github.com/prometheus/common v0.66.0
+	github.com/prometheus/common v0.66.1
 )
 
 require (
@@ -26,7 +26,6 @@ require (
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/sys/atomicwriter v0.1.0 // indirect
 	github.com/moby/term v0.5.2 // indirect
@@ -47,11 +46,11 @@ require (
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.8.0 // indirect
+	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250826171959-ef028d996bc1 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250826171959-ef028d996bc1 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.5.2 // indirect
 )
