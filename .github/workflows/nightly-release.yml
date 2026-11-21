@@ -23,12 +23,12 @@ jobs:
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v4.7.2
+        uses: gittools/actions/gitversion/setup@v5.0.0
         with:
-          versionSpec: '6.x'
+          versionSpec: '7.0.x'
       - name: Use GitVersion
         id: gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v4.7.2
+        uses: gittools/actions/gitversion/execute@v5.0.0
 
       - name: Build
         env:
@@ -40,16 +40,16 @@ jobs:
           go build -v -ldflags="
           -w
           -s  
-          -X 'main.Version=v${{ steps.gitversion.outputs.FullSemVer }}'
+          -X 'main.Version=v${{ steps.gitversion.outputs.fullSemVer }}'
           -X 'app/build.Time=$( date '+%F %H-%M-%S' )'
-          -X 'github.com/prometheus/common/version.Version=${{ steps.gitversion.outputs.FullSemVer }}'
-          -X 'github.com/prometheus/common/version.Revision=${{ steps.gitversion.outputs.VersionSourceSha }}'
-          -X 'github.com/prometheus/common/version.Branch=${{ steps.gitversion.outputs.BranchName }}'
+          -X 'github.com/prometheus/common/version.Version=${{ steps.gitversion.outputs.fullSemVer }}'
+          -X 'github.com/prometheus/common/version.Revision=${{ steps.gitversion.outputs.versionSourceSha }}'
+          -X 'github.com/prometheus/common/version.Branch=${{ steps.gitversion.outputs.branchName }}'
           -X 'github.com/prometheus/common/version.BuildDate=$( date '+%F %H-%M-%S' )'"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: docker_service_exporter.${{ steps.gitversion.outputs.FullSemVer }}
+          name: docker_service_exporter.${{ steps.gitversion.outputs.fullSemVer }}
           path: src/docker_service_exporter
 
       - name: Docker Build and push
@@ -58,8 +58,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: Dockerfile
           image-name: server
-          image-tag: ${{ steps.gitversion.outputs.FullSemVer }}
+          image-tag: ${{ steps.gitversion.outputs.fullSemVer }}
           custom-args: |
-            --build-arg APP_VERSION=${{ steps.gitversion.outputs.FullSemVer }}
-            --build-arg APP_REVISION=${{ steps.gitversion.outputs.VersionSourceSha }}
-            --build-arg APP_BRANCH=${{ steps.gitversion.outputs.BranchName }}
+            --build-arg APP_VERSION=${{ steps.gitversion.outputs.fullSemVer }}
+            --build-arg APP_REVISION=${{ steps.gitversion.outputs.versionSourceSha }}
+            --build-arg APP_BRANCH=${{ steps.gitversion.outputs.branchName }}
